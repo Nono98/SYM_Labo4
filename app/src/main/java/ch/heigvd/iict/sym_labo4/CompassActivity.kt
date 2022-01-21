@@ -17,6 +17,7 @@ import ch.heigvd.iict.sym_labo4.gl.OpenGLRenderer
  * Project: Labo4
  * Created by fabien.dutoit on 21.11.2016
  * Updated by fabien.dutoit on 06.11.2020
+ * Updated by Adrien Peguiron, Noémie Plancherel, Nicolas Viotti on 29.11.2021
  * (C) 2016 - HEIG-VD, IICT
  */
 class CompassActivity : AppCompatActivity() , SensorEventListener {
@@ -44,7 +45,7 @@ class CompassActivity : AppCompatActivity() , SensorEventListener {
         // we initiate the view
         setContentView(R.layout.activity_compass)
 
-        //we create the renderer
+        // we create the renderer
         opglr = OpenGLRenderer(applicationContext)
 
         // link to GUI
