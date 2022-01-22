@@ -2,6 +2,7 @@ package ch.heigvd.iict.sym_labo4.viewmodels
 
 import android.app.Application
 import android.bluetooth.*
+import android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -192,6 +193,7 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                             caractéristiques, on en profitera aussi pour mettre en place les callbacks correspondants.
                          */
 
+
                     }
 
                     override fun onServicesInvalidated() {
@@ -222,6 +224,17 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
             }.enqueue()
 
             return true //FIXME
+        }
+        fun sendValue(value: Int): Boolean {
+            val tab = ByteArray(4);
+            tab[3]=value.toByte()
+            writeCharacteristic(temperatureChar,tab,WRITE_TYPE_DEFAULT)
+            return true;
+        }
+
+        fun sendCurrentTime(): Boolean {
+            //writeCharacteristic(currentTimeChar)
+            return false;
         }
     }
 
