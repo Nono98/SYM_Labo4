@@ -43,9 +43,9 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
         Log.d(TAG, "User request connection to: $device")
         if (!isConnected.value!!) {
             ble.connect(device)
-                    .retry(1, 100)
-                    .useAutoConnect(false)
-                    .enqueue()
+                .retry(1, 100)
+                .useAutoConnect(false)
+                .enqueue()
         }
     }
 
@@ -93,24 +93,36 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
         }
 
         override fun onDeviceDisconnected(device: BluetoothDevice, reason: Int) {
-            if(reason == ConnectionObserver.REASON_NOT_SUPPORTED) {
+            if (reason == ConnectionObserver.REASON_NOT_SUPPORTED) {
                 Log.d(TAG, "onDeviceDisconnected - not supported")
-                Toast.makeText(getApplication(), "Device not supported - implement method isRequiredServiceSupported()", Toast.LENGTH_LONG).show()
-            }
-            else
+                Toast.makeText(
+                    getApplication(),
+                    "Device not supported - implement method isRequiredServiceSupported()",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else
                 Log.d(TAG, "onDeviceDisconnected")
             isConnected.value = false
         }
 
     }
 
-    private inner class SYMBleManager(applicationContext: Context) : BleManager(applicationContext) {
+    private inner class SYMBleManager(applicationContext: Context) :
+        BleManager(applicationContext) {
         /**
          * BluetoothGatt callbacks object.
          */
         private var mGattCallback: BleManagerGattCallback? = null
+        final val uuidSymService = "3c0a1000-281d-4b48-b2a7-f15579a1c38f"
+        final val uuidTimeService = "00001805-0000-1000-8000-00805f9b34fb"
+        final val uuidCurrentTimeChar = "00002A2B-0000-1000-8000-00805f9b34fb"
+        final val uuidIntegerChar = "3c0a1001-281d-4b48-b2a7-f15579a1c38f"
+        final val uuidTemperatureChar = "3c0a1002-281d-4b48-b2a7-f15579a1c38f"
+        final val uuidButtonClickChar = "3c0a1003-281d-4b48-b2a7-f15579a1c38f"
 
         public override fun getGattCallback(): BleManagerGattCallback {
+
+
             //we initiate the mGattCallback on first call, singleton
             if (mGattCallback == null) {
                 mGattCallback = object : BleManagerGattCallback() {
@@ -119,41 +131,35 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                         mConnection = gatt //trick to force disconnection
 
                         Log.d(TAG, "isRequiredServiceSupported - TODO")
-                        symService = gatt.getService(UUID.fromString("3c0a1000-281d-4b48-b2a7-f15579a1c38f"))
-                        timeService = gatt.getService(UUID.fromString("00001805-0000-1000-8000-00805f9b34fb"))
-                        if(symService != null && timeService != null )
-                            {
-                                currentTimeChar = timeService!!.getCharacteristic((UUID.fromString("00002A2B-0000-1000-8000-00805f9b34fb")))
-                                integerChar = symService!!.getCharacteristic((UUID.fromString("3c0a1001-281d-4b48-b2a7-f15579a1c38f")))
-                                temperatureChar = symService!!.getCharacteristic((UUID.fromString("3c0a1002-281d-4b48-b2a7-f15579a1c38f")))
-                                buttonClickChar = symService!!.getCharacteristic((UUID.fromString("3c0a1003-281d-4b48-b2a7-f15579a1c38f")))
+                        symService = gatt.getService(UUID.fromString(uuidSymService))
+                        timeService = gatt.getService(UUID.fromString(uuidTimeService))
+                        if (symService != null && timeService != null) {
+                            currentTimeChar =
+                                timeService!!.getCharacteristic((UUID.fromString(uuidCurrentTimeChar)))
+                            integerChar =
+                                symService!!.getCharacteristic((UUID.fromString(uuidIntegerChar)))
+                            temperatureChar =
+                                symService!!.getCharacteristic((UUID.fromString(uuidTemperatureChar)))
+                            buttonClickChar =
+                                symService!!.getCharacteristic((UUID.fromString(uuidButtonClickChar)))
 
+                            if (currentTimeChar != null && integerChar != null && temperatureChar != null && buttonClickChar != null) {
+                                val timePerm = currentTimeChar!!.permissions
+                                val integerPerm = integerChar!!.permissions
+                                val temperaturePerm = temperatureChar!!.permissions
+                                val buttonClickPerm = buttonClickChar!!.permissions
 
-                                if(currentTimeChar != null && integerChar != null && temperatureChar != null && buttonClickChar!= null)
-                                {
-                                    val timePerm = currentTimeChar!!.permissions
-                                    val integerPerm= integerChar!!.permissions
-                                    val temperaturePerm = temperatureChar!!.permissions
-                                    val buttonClickPerm = buttonClickChar!!.permissions
-
-                                    if(temperaturePerm != BluetoothGattDescriptor.PERMISSION_READ)
-                                    {
-                                        return false;
-                                    }
-                                    else
-                                    {
-                                        Log.d(TAG, "It works");
-                                    }
-
-
-
-                                } else
-                                {
+                                if (temperaturePerm != BluetoothGattDescriptor.PERMISSION_READ) {
                                     return false;
+                                } else {
+                                    Log.d(TAG, "It works");
                                 }
+
+
+                            } else {
+                                return false;
                             }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                         /* TODO
@@ -176,6 +182,7 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                             Dans notre cas il s'agit de s'enregistrer pour recevoir les notifications proposées par certaines
                             caractéristiques, on en profitera aussi pour mettre en place les callbacks correspondants.
                          */
+
                     }
 
                     override fun onServicesInvalidated() {
