@@ -10,6 +10,10 @@ import androidx.lifecycle.MutableLiveData
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.observer.ConnectionObserver
 import java.util.*
+import androidx.lifecycle.LiveData
+import no.nordicsemi.android.ble.callback.DataReceivedCallback
+import no.nordicsemi.android.ble.data.Data
+
 
 /**
  * Project: Labo4
@@ -24,6 +28,11 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
 
     //live data - observer
     val isConnected = MutableLiveData(false)
+
+    private val temperature = MutableLiveData<Float>()
+    fun getTemperature(): LiveData<Float>? {
+        return temperature
+    }
 
     //Services and Characteristics of the SYM Pixl
     private var timeService: BluetoothGattService? = null
@@ -206,7 +215,13 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                 des MutableLiveData
                 On placera des méthodes similaires pour les autres opérations
             */
-            return false //FIXME
+            readCharacteristic(temperatureChar).with { device: BluetoothDevice?, data: Data ->
+                temperature.setValue(
+                    data.getIntValue(Data.FORMAT_UINT16, 0)!! / 10f
+                )
+            }.enqueue()
+
+            return true //FIXME
         }
     }
 
