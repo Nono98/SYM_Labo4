@@ -1,10 +1,7 @@
 package ch.heigvd.iict.sym_labo4.viewmodels
 
 import android.app.Application
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothGattService
+import android.bluetooth.*
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -12,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.observer.ConnectionObserver
+import java.util.*
 
 /**
  * Project: Labo4
@@ -61,6 +59,7 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
         vous pouvez placer ici les différentes méthodes permettant à l'utilisateur
         d'interagir avec le périphérique depuis l'activité
      */
+
 
     fun readTemperature(): Boolean {
         if (!isConnected.value!! || temperatureChar == null)
@@ -120,7 +119,43 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                         mConnection = gatt //trick to force disconnection
 
                         Log.d(TAG, "isRequiredServiceSupported - TODO")
+                        symService = gatt.getService(UUID.fromString("3c0a1000-281d-4b48-b2a7-f15579a1c38f"))
+                        timeService = gatt.getService(UUID.fromString("00001805-0000-1000-8000-00805f9b34fb"))
+                        if(symService != null && timeService != null )
+                            {
+                                currentTimeChar = timeService!!.getCharacteristic((UUID.fromString("00002A2B-0000-1000-8000-00805f9b34fb")))
+                                integerChar = symService!!.getCharacteristic((UUID.fromString("3c0a1001-281d-4b48-b2a7-f15579a1c38f")))
+                                temperatureChar = symService!!.getCharacteristic((UUID.fromString("3c0a1002-281d-4b48-b2a7-f15579a1c38f")))
+                                buttonClickChar = symService!!.getCharacteristic((UUID.fromString("3c0a1003-281d-4b48-b2a7-f15579a1c38f")))
 
+
+                                if(currentTimeChar != null && integerChar != null && temperatureChar != null && buttonClickChar!= null)
+                                {
+                                    val timePerm = currentTimeChar!!.permissions
+                                    val integerPerm= integerChar!!.permissions
+                                    val temperaturePerm = temperatureChar!!.permissions
+                                    val buttonClickPerm = buttonClickChar!!.permissions
+
+                                    if(temperaturePerm != BluetoothGattDescriptor.PERMISSION_READ)
+                                    {
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        Log.d(TAG, "It works");
+                                    }
+
+
+
+                                } else
+                                {
+                                    return false;
+                                }
+                            }
+                        else
+                        {
+                            return false;
+                        }
                         /* TODO
                         - Nous devons vérifier ici que le périphérique auquel on vient de se connecter possède
                           bien tous les services et les caractéristiques attendues, on vérifiera aussi que les
@@ -128,6 +163,8 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                         - On en profitera aussi pour garder les références vers les différents services et
                           caractéristiques (déclarés en lignes 39 à 44)
                         */
+
+
 
                         return false //FIXME si tout est OK, on retourne true, sinon la librairie appelera la méthode onDeviceDisconnected() avec le flag REASON_NOT_SUPPORTED
                     }
