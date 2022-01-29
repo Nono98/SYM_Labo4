@@ -106,14 +106,17 @@ class BleActivity : BaseTemplateActivity() {
         //ble events
         bleViewModel.isConnected.observe(this, { updateGui() })
 
+        // Changement de la date et heure lorsque une notification est reçue
         bleViewModel.getDateAndTime()?.observe(this, {
             dateAndTime.text = it
         })
 
+        // Changement du nombre de clicks lorsque une notification est reçue
         bleViewModel.getNbClicks()?.observe(this, {
             nbClicks.text = it.toString()
         })
 
+        // Lecture de la température
         btnTemperature.setOnClickListener {
             // Avant de pouvoir afficher la température il faut la lire
             bleViewModel.readTemperature()
@@ -122,10 +125,12 @@ class BleActivity : BaseTemplateActivity() {
             })
         }
 
+        // Envoi d'un int sur l'appareil
         btnInt.setOnClickListener {
             bleViewModel.sendInt(int.text.toString().toInt())
         }
 
+        // Envoi de la date et heure sur l'appareil
         btnSendTime.setOnClickListener {
             bleViewModel.sendTime()
         }

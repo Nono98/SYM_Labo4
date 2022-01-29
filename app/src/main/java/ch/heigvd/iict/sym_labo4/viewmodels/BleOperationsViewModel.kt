@@ -185,27 +185,13 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                                 return true
                             }
                         }
-                        /* TODO
-                        - Nous devons vérifier ici que le périphérique auquel on vient de se connecter possède
-                          bien tous les services et les caractéristiques attendues, on vérifiera aussi que les
-                          caractéristiques présentent bien les opérations attendues
-                        - On en profitera aussi pour garder les références vers les différents services et
-                          caractéristiques (déclarés en lignes 39 à 44)
-                        */
 
-
-
-                        return false //FIXME si tout est OK, on retourne true, sinon la librairie appelera la méthode onDeviceDisconnected() avec le flag REASON_NOT_SUPPORTED
+                        return false
                     }
 
                     @RequiresApi(Build.VERSION_CODES.O)
                     override fun initialize() {
-                        /*  TODO
-                            Ici nous somme sûr que le périphérique possède bien tous les services et caractéristiques
-                            attendus et que nous y sommes connectés. Nous pouvous effectuer les premiers échanges BLE:
-                            Dans notre cas il s'agit de s'enregistrer pour recevoir les notifications proposées par certaines
-                            caractéristiques, on en profitera aussi pour mettre en place les callbacks correspondants.
-                         */
+                        // Notifications lorsque la date et l'heure changent
                         setNotificationCallback(currentTimeChar).with { _, data ->
                             var date = data.getIntValue(Data.FORMAT_UINT16, 0).toString() + "-"
                             for (i in 2..6) {
@@ -233,6 +219,7 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                         }
                         enableNotifications(currentTimeChar).enqueue()
 
+                        // Notification lorsqu'un bouton est pressé
                         setNotificationCallback(buttonClickChar).with { _, data ->
                             nbClicks.setValue(data.getIntValue(Data.FORMAT_UINT8, 0))
                         }
@@ -255,12 +242,6 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
 
         // Lecture de la température sur l'appareil
         fun readTemperature(): Boolean {
-            /*  TODO
-                on peut effectuer ici la lecture de la caractéristique température
-                la valeur récupérée sera envoyée à l'activité en utilisant le mécanisme
-                des MutableLiveData
-                On placera des méthodes similaires pour les autres opérations
-            */
             readCharacteristic(temperatureChar).with { _: BluetoothDevice?, data: Data ->
                 // La valeur trouvée est divisée par 10 pour avoir une valeur en celsius
                 temperature.setValue(data.getIntValue(Data.FORMAT_UINT16, 0)!! / 10f)
@@ -285,7 +266,7 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
 
             val buffer = ByteArray(10)
             // Shift à droite pour convertir l'année en uint16
-            buffer[0] = (year shr 0).toByte()
+            buffer[0] = year.toByte()
             buffer[1] = (year shr 8).toByte()
             buffer[2] = (date.get(Calendar.MONTH) + 1).toByte() // Calendar.Month commence à 0
             buffer[3] = date.get(Calendar.DAY_OF_MONTH).toByte()
