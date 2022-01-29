@@ -148,13 +148,6 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
          * BluetoothGatt callbacks object.
          */
         private var mGattCallback: BleManagerGattCallback? = null
-        // UUIDs des services et caractéristiques
-        final val uuidSymService = "3c0a1000-281d-4b48-b2a7-f15579a1c38f"
-        final val uuidTimeService = "00001805-0000-1000-8000-00805f9b34fb"
-        final val uuidCurrentTimeChar = "00002A2B-0000-1000-8000-00805f9b34fb"
-        final val uuidIntegerChar = "3c0a1001-281d-4b48-b2a7-f15579a1c38f"
-        final val uuidTemperatureChar = "3c0a1002-281d-4b48-b2a7-f15579a1c38f"
-        final val uuidButtonClickChar = "3c0a1003-281d-4b48-b2a7-f15579a1c38f"
 
         public override fun getGattCallback(): BleManagerGattCallback {
 
@@ -168,18 +161,18 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
 
                         Log.d(TAG, "isRequiredServiceSupported - TODO")
                         // Vérification des services
-                        symService = gatt.getService(UUID.fromString(uuidSymService))
-                        timeService = gatt.getService(UUID.fromString(uuidTimeService))
+                        symService = gatt.getService(UUID.fromString("3c0a1000-281d-4b48-b2a7-f15579a1c38f"))
+                        timeService = gatt.getService(UUID.fromString("00001805-0000-1000-8000-00805f9b34fb"))
                         if (symService != null && timeService != null) {
                             // Vérification des caractéristiques
                             currentTimeChar =
-                                timeService!!.getCharacteristic((UUID.fromString(uuidCurrentTimeChar)))
+                                timeService!!.getCharacteristic((UUID.fromString("00002A2B-0000-1000-8000-00805f9b34fb")))
                             integerChar =
-                                symService!!.getCharacteristic((UUID.fromString(uuidIntegerChar)))
+                                symService!!.getCharacteristic((UUID.fromString("3c0a1001-281d-4b48-b2a7-f15579a1c38f")))
                             temperatureChar =
-                                symService!!.getCharacteristic((UUID.fromString(uuidTemperatureChar)))
+                                symService!!.getCharacteristic((UUID.fromString("3c0a1002-281d-4b48-b2a7-f15579a1c38f")))
                             buttonClickChar =
-                                symService!!.getCharacteristic((UUID.fromString(uuidButtonClickChar)))
+                                symService!!.getCharacteristic((UUID.fromString("3c0a1003-281d-4b48-b2a7-f15579a1c38f")))
 
                             if (currentTimeChar != null && integerChar != null && temperatureChar != null && buttonClickChar != null) {
                                 return true

@@ -127,7 +127,11 @@ class BleActivity : BaseTemplateActivity() {
 
         // Envoi d'un int sur l'appareil
         btnInt.setOnClickListener {
-            bleViewModel.sendInt(int.text.toString().toInt())
+            val value = int.text.toString()
+            // Si le champ est nul, rien n'est envoyé. Le type de champ étant "number", seul un entier pourra être entré.
+            if (value != "") {
+                bleViewModel.sendInt(value.toInt())
+            }
         }
 
         // Envoi de la date et heure sur l'appareil
