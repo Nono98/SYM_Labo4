@@ -19,6 +19,47 @@
 
             <!-- TODO vous placerez dans ce layout toutes les vues nécessaires aux intéractions avec le périphérique BLE -->
 
+            <TextView
+                android:id="@+id/ble_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="date" />
+
+            <TextView
+                android:id="@+id/ble_nbclicks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="nombre de clicks" />
+
+            <TextView
+                android:id="@+id/ble_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="température" />
+
+            <Button
+                android:id="@+id/ble_button_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="afficher la température" />
+
+            <EditText
+                android:id="@+id/ble_int"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+
+            <Button
+                android:id="@+id/ble_button_int"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Envoyer l'entier" />
+
+            <Button
+                android:id="@+id/ble_button_send_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Envoyer la date" />
         </LinearLayout>
 
     </ScrollView>
@@ -32,7 +73,9 @@
             android:id="@+id/ble_scanresults"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical" >
+
+        </ListView>
 
         <TextView
             android:id="@+id/ble_scanresults_empty"
