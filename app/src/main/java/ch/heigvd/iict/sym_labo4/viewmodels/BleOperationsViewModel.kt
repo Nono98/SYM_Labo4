@@ -230,7 +230,6 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
 
                         setNotificationCallback(buttonClickChar).with { _, data ->
                             nbClicks.setValue(data.getIntValue(Data.FORMAT_UINT8, 0))
-
                         }
                         enableNotifications(buttonClickChar).enqueue()
                     }
@@ -296,6 +295,18 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
             buffer[6] = second.toByte()
             buffer[7] = dayOfWeek.toByte()
             writeCharacteristic(currentTimeChar, buffer, WRITE_TYPE_DEFAULT).enqueue()
+		}
+			
+        fun sendValue(value: Int): Boolean {
+            val tab = ByteArray(4);
+            tab[3]=value.toByte()
+            writeCharacteristic(temperatureChar,tab,WRITE_TYPE_DEFAULT)
+            return true;
+        }
+
+        fun sendCurrentTime(): Boolean {
+            //writeCharacteristic(currentTimeChar)
+            return false;
         }
     }
 
