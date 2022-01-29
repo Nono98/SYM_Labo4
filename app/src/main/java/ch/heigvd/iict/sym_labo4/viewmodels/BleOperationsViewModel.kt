@@ -167,9 +167,11 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                         mConnection = gatt //trick to force disconnection
 
                         Log.d(TAG, "isRequiredServiceSupported - TODO")
+                        // Vérification des services
                         symService = gatt.getService(UUID.fromString(uuidSymService))
                         timeService = gatt.getService(UUID.fromString(uuidTimeService))
                         if (symService != null && timeService != null) {
+                            // Vérification des caractéristiques
                             currentTimeChar =
                                 timeService!!.getCharacteristic((UUID.fromString(uuidCurrentTimeChar)))
                             integerChar =
@@ -207,19 +209,22 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                         setNotificationCallback(currentTimeChar).with { _, data ->
                             var date = data.getIntValue(Data.FORMAT_UINT16, 0).toString() + "-"
                             for (i in 2..6) {
-                                val value = data.getIntValue(Data.FORMAT_UINT8, i).toString()
-                                if (value < 10.toString()){
-                                    date += 0
+                                val value = data.getIntValue(Data.FORMAT_UINT8, i)
+                                if (value != null) {
+                                    if (value < 10){
+                                        // Ajout de 0 pour un format plus propre
+                                        date += "0"
+                                    }
                                 }
-                                date += value
-                                //pour la date
+                                date += value.toString()
+                                // Pour la date
                                 if (i < 3){
                                     date += "-"
                                 }
                                 else if (i == 3){
                                     date += " "
                                 }
-                                //pour l'heure
+                                // Pour l'heure
                                 else if(i < 6){
                                     date += ":"
                                 }
@@ -257,7 +262,7 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
                 On placera des méthodes similaires pour les autres opérations
             */
             readCharacteristic(temperatureChar).with { _: BluetoothDevice?, data: Data ->
-                //la valeur trouvée est divisée par 10 pour avoir une valeur en celsius
+                // La valeur trouvée est divisée par 10 pour avoir une valeur en celsius
                 temperature.setValue(data.getIntValue(Data.FORMAT_UINT16, 0)!! / 10f)
             }.enqueue()
 
@@ -267,7 +272,7 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
         // Envoi d'un entier sur l'appareil
         fun setInt(value: Int){
             val buffer : ByteArray = ByteArray(4)
-            //4 shifts à droite pour convertir la valeur en uint32
+            // 4 shifts à droite pour convertir la valeur en uint32
             for (i in 0..3) buffer[i] = (value shr (i * 8)).toByte()
             writeCharacteristic(integerChar, buffer, WRITE_TYPE_DEFAULT).enqueue()
         }
@@ -277,37 +282,20 @@ class BleOperationsViewModel(application: Application) : AndroidViewModel(applic
         fun setTime(){
             val date = Calendar.getInstance()
             val year = date.get(Calendar.YEAR)
-            val month = date.get(Calendar.MONTH) + 1 //Calendar.Month commence à 0
-            val day = date.get(Calendar.DAY_OF_MONTH)
-            val hour = date.get(Calendar.HOUR_OF_DAY)
-            val minute = date.get(Calendar.MINUTE)
-            val second = date.get(Calendar.SECOND)
-            val dayOfWeek = date.get(Calendar.DAY_OF_WEEK)
 
-            val buffer : ByteArray = ByteArray(10)
-            //shift à droite pour convertir l'année en uint16
+            val buffer = ByteArray(10)
+            // Shift à droite pour convertir l'année en uint16
             buffer[0] = (year shr 0).toByte()
             buffer[1] = (year shr 8).toByte()
-            buffer[2] = month.toByte()
-            buffer[3] = day.toByte()
-            buffer[4] = hour.toByte()
-            buffer[5] = minute.toByte()
-            buffer[6] = second.toByte()
-            buffer[7] = dayOfWeek.toByte()
+            buffer[2] = (date.get(Calendar.MONTH) + 1).toByte() // Calendar.Month commence à 0
+            buffer[3] = date.get(Calendar.DAY_OF_MONTH).toByte()
+            buffer[4] = date.get(Calendar.HOUR_OF_DAY).toByte()
+            buffer[5] = date.get(Calendar.MINUTE).toByte()
+            buffer[6] = date.get(Calendar.SECOND).toByte()
+            buffer[7] = date.get(Calendar.DAY_OF_WEEK).toByte()
             writeCharacteristic(currentTimeChar, buffer, WRITE_TYPE_DEFAULT).enqueue()
 		}
-			
-        fun sendValue(value: Int): Boolean {
-            val tab = ByteArray(4);
-            tab[3]=value.toByte()
-            writeCharacteristic(temperatureChar,tab,WRITE_TYPE_DEFAULT)
-            return true;
-        }
 
-        fun sendCurrentTime(): Boolean {
-            //writeCharacteristic(currentTimeChar)
-            return false;
-        }
     }
 
     companion object {

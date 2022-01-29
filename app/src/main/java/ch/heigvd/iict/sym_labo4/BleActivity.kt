@@ -115,7 +115,7 @@ class BleActivity : BaseTemplateActivity() {
         })
 
         btnTemperature.setOnClickListener {
-            //Avant de pouvoir afficher la température il faut la lire
+            // Avant de pouvoir afficher la température il faut la lire
             bleViewModel.readTemperature()
             bleViewModel.getTemperature()?.observe(this, {
                 temperature.text = it.toString()
