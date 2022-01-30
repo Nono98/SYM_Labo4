@@ -39,8 +39,8 @@ UUID du service: 0x180F
 
 Dans la partie "Transports" du schéma XML, nous pouvons lire qu'il supporte le BT classique ainsi que le BLE
 
-<Classic>true</Classic> (BT Classique)
-<LowEnergy>true</LowEnergy> (BLE)
+\<Classic\>true\</Classic\> (BT Classique)
+\<LowEnergy\>true\</LowEnergy\> (BLE)
 
 (source : https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Services/org.bluetooth.service.battery_service.xml)
 
