@@ -31,9 +31,14 @@ En résumé : taille de la variable et précision nécessaire
 
 > Le niveau de charge de la pile est à présent indiqué uniquement sur l’écran du périphérique, mais nous souhaiterions que celui-ci puisse informer le smartphone sur son niveau décharge restante. Veuillez spécifier la(les) caractéristique(s) qui composerai(en)t un tel service, mis à disposition par le périphérique etpermettant de communiquerle niveau de batterie restant via Bluetooth Low Energy. Pour chaque caractéristique, vous indiquerez les opérations supportées (lecture, écriture, notification, indication, etc.) ainsi que les données échangées et leur format.
 
+Un tel service existe déjà pour BLE.
+
 Sur la documentation officielle de Bluetooth, pour le service de la batterie, nous obtenons les informations suivantes
 Le service expose l'état de la batterie ou le niveau de la batterie, d'une unique batterie ou de plusieurs batteries dans un appareil
 UUID de l'état : 0x180F
+Dans la partie "Transports" du schéma XML, nous pouvons lire qu'il supporte le BT classique ainsi que le BLE
+<Classic>true</Classic> (BT Classique)
+<LowEnergy>true</LowEnergy> (BLE)
 (source : https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Services/org.bluetooth.service.battery_service.xml)
 
 La caractéristique qui nous intéresse est le "Battery Level Characteristic", codé sur un entier non-signé 8 bits (uint8) avec une valeur minimum de 0 et maximum de 100(%).
