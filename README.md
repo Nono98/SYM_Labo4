@@ -26,6 +26,29 @@ Pour les deux problèmes précédents, nous pouvons proposer les deux solutions 
 
 > La caractéristique permettant de lire la température retourne la valeur en degrés Celsius, multipliée par 10,sous la forme d’un entier non-signé de 16bits. Quel est l’intérêt de procéder de la sorte? Pourquoi ne pas échanger un nombre à virgule flottante de type float par exemple?
 
-
+Par soucis de place, l'integer 16bits est plus intéressant qu'un float sur 32bits. Egalement, une précision de l'ordre du millième n'est certainement pas nécessaire pour un capteur de cet acabi qui ne se veut pas professionnel. Imaginons qu'on récupère la valeur "302" dans l'integer, on peut facilement définir que c'est "30.2°C" et un tel niveau de précision est suffisant. Un float permettrait peut-être d'être plus précis, à condition que le capteur soit capable d'enregistrer des variations de l'ordre de "0.01°C" de son côté.
+En résumé : taille de la variable et précision nécessaire
 
 > Le niveau de charge de la pile est à présent indiqué uniquement sur l’écran du périphérique, mais nous souhaiterions que celui-ci puisse informer le smartphone sur son niveau décharge restante. Veuillez spécifier la(les) caractéristique(s) qui composerai(en)t un tel service, mis à disposition par le périphérique etpermettant de communiquerle niveau de batterie restant via Bluetooth Low Energy. Pour chaque caractéristique, vous indiquerez les opérations supportées (lecture, écriture, notification, indication, etc.) ainsi que les données échangées et leur format.
+
+Sur la documentation officielle de Bluetooth, pour le service de la batterie, nous obtenons les informations suivantes
+Le service expose l'état de la batterie ou le niveau de la batterie, d'une unique batterie ou de plusieurs batteries dans un appareil
+UUID de l'état : 0x180F
+(source : https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Services/org.bluetooth.service.battery_service.xml)
+
+La caractéristique qui nous intéresse est le "Battery Level Characteristic", codé sur un entier non-signé 8 bits (uint8) avec une valeur minimum de 0 et maximum de 100(%).
+Son numéro assigné est le 0x2A19 (source : https://www.andreasjakl.com/read-battery-level-bluetooth-le-devices/)
+
+Ci-dessous, un tableau contenant les propriétés de Battery Level Characteristic
+
+| Opérations           |     |
+| -------------------- | --------- |
+| Read                 | Mandatory |
+| Write                | Excluded  |
+| WriteWithoutResponse | Excluded  |
+| SignedWrite          | Excluded  |
+| ReliableWrite        | Excluded  |
+| Notify               | Optional  |
+| Indicate             | Excluded  |
+| WritableAuxiliaries  | Excluded  |
+| Broadcast            | Excluded  |
