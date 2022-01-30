@@ -34,11 +34,16 @@ En résumé : taille de la variable et précision nécessaire
 Un tel service existe déjà pour BLE.
 
 Sur la documentation officielle de Bluetooth, pour le service de la batterie, nous obtenons les informations suivantes
+
 Le service expose l'état de la batterie ou le niveau de la batterie, d'une unique batterie ou de plusieurs batteries dans un appareil
+
 UUID de l'état : 0x180F
+
 Dans la partie "Transports" du schéma XML, nous pouvons lire qu'il supporte le BT classique ainsi que le BLE
+
 <Classic>true</Classic> (BT Classique)
 <LowEnergy>true</LowEnergy> (BLE)
+
 (source : https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Services/org.bluetooth.service.battery_service.xml)
 
 La caractéristique qui nous intéresse est le "Battery Level Characteristic", codé sur un entier non-signé 8 bits (uint8) avec une valeur minimum de 0 et maximum de 100(%).
